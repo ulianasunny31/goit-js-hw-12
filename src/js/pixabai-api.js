@@ -10,7 +10,7 @@ const loader = document.querySelector('.loader');
 let page = 1;
 let perPage = 15;
 
-async function getPictures(query) {
+async function getPictures(query, renderFn) {
   //search parameters
   const searchParams = new URLSearchParams({
     key,
@@ -24,24 +24,44 @@ async function getPictures(query) {
 
   const url = `https://pixabay.com/api/?${searchParams}`;
 
-  const res = await axios.get(url);
-  loader.style.display = 'block';
-  const pictures = res.data;
+  try {
+    page += 1;
+    loader.style.display = 'block';
+    const res = await axios.get(url);
+    const pictures = res.data.hits;
 
-  if (pictures.length === 0) {
-    iziToast.error({
-      title: 'No pictures found',
-      message: 'Try another query',
-      messageColor: 'black',
-      messageSize: '14px',
-      position: 'topCenter',
-      timeout: 3000,
-      closeOnClick: true,
-    });
+    const totalHits = res.data.totalHits;
+
+    if (pictures.length === 0) {
+      iziToast.error({
+        title: 'No pictures found',
+        message: 'Try another query',
+        messageColor: 'black',
+        messageSize: '14px',
+        position: 'topCenter',
+        timeout: 3000,
+        closeOnClick: true,
+      });
+    }
+    //rendering
+    renderFn(pictures);
+
+    if (page > totalHits) {
+      iziToast.error({
+        title: `We're sorry, but you've reached the end of search results.`,
+        message: 'Try another query',
+        messageColor: 'black',
+        messageSize: '14px',
+        position: 'topCenter',
+        timeout: 3000,
+        closeOnClick: true,
+      });
+    }
+  } catch (e) {
+    console.log(e);
+  } finally {
+    loader.style.display = 'none';
   }
-  //rendering
-  loader.style.display = 'none';
-  renderFn(pictures);
 }
 
 export default getPictures;
