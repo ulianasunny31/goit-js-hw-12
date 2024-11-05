@@ -7,10 +7,16 @@ import axios from 'axios';
 const loadMoreBtn = document.querySelector('.load-more-btn');
 const key = '41103551-afb5440a0c91585482e280fcd';
 const loader = document.querySelector('.loader');
+export let userSearchQuery = '';
 let page = 1;
 let perPage = 15;
 
-async function getPictures(query, renderFn) {
+export async function getPictures(query, renderFn) {
+  if (userSearchQuery !== query) {
+    page = 1;
+    userSearchQuery = query;
+  }
+
   //search parameters
   const searchParams = new URLSearchParams({
     key,
@@ -25,14 +31,12 @@ async function getPictures(query, renderFn) {
   const url = `https://pixabay.com/api/?${searchParams}`;
 
   try {
-    page += 1;
     loader.style.display = 'block';
     const res = await axios.get(url);
     const pictures = res.data.hits;
-
     const totalHits = res.data.totalHits;
 
-    if (pictures.length === 0) {
+    if (pictures.length === 0 && page === 1) {
       iziToast.error({
         title: 'No pictures found',
         message: 'Try another query',
@@ -42,11 +46,15 @@ async function getPictures(query, renderFn) {
         timeout: 3000,
         closeOnClick: true,
       });
+    } else {
+      page += 1;
+      //rendering
+      renderFn(pictures);
+      loadMoreBtn.classList.remove('not-visible');
     }
-    //rendering
-    renderFn(pictures);
 
-    if (page > totalHits) {
+    if (page > Math.ceil(totalHits / perPage)) {
+      loadMoreBtn.classList.add('not-visible');
       iziToast.error({
         title: `We're sorry, but you've reached the end of search results.`,
         message: 'Try another query',
@@ -56,6 +64,8 @@ async function getPictures(query, renderFn) {
         timeout: 3000,
         closeOnClick: true,
       });
+    } else {
+      loadMoreBtn.classList.remove('not-visible');
     }
   } catch (e) {
     console.log(e);
@@ -63,5 +73,3 @@ async function getPictures(query, renderFn) {
     loader.style.display = 'none';
   }
 }
-
-export default getPictures;

@@ -49,7 +49,11 @@ function renderPictures(pics) {
       }
     )
     .join('');
-  gallery.innerHTML = markup;
+  gallery.insertAdjacentHTML('beforeend', markup);
+  // const lastCard = gallery.lastElementChild;
+  // const cardHeight = lastCard.getBoundingClientRect().height;
+  // const scrollDist = cardHeight * 2;
+
   //Renewing the gallery
   lightbox.refresh();
 }

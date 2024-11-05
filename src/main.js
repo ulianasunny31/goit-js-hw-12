@@ -1,14 +1,13 @@
 import renderPictures from './js/render-functions';
-import getPictures from './js/pixabai-api';
+import { getPictures, userSearchQuery } from './js/pixabai-api';
 
 //Declarations
 const form = document.getElementById('form');
-
+const loadMoreBtn = document.querySelector('.load-more-btn');
 export const gallery = document.querySelector('.gallery');
 
 form.addEventListener('submit', e => {
   e.preventDefault();
-  gallery.innerHTML = '';
 
   //Getting info from the input
   const searchValue = e.target.elements.searchquery.value;
@@ -16,5 +15,7 @@ form.addEventListener('submit', e => {
   getPictures(searchValue, renderPictures);
 });
 
-// const rect = gallery.getBoundingClientRect();
-// console.log(rect);
+loadMoreBtn.addEventListener('click', async () => {
+  getPictures(userSearchQuery, renderPictures);
+  console.log(userSearchQuery);
+});
