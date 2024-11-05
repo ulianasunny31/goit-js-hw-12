@@ -2,6 +2,10 @@
   display: none;
 }
 
+.visible {
+  display: block;
+}
+
 .load-more-btn {
   margin: 0 auto;
   height: 40px;

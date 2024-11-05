@@ -13,8 +13,8 @@ let perPage = 15;
 
 export async function getPictures(query, renderFn) {
   if (userSearchQuery !== query) {
-    page = 1;
     userSearchQuery = query;
+    page = 1;
   }
 
   //search parameters
@@ -31,7 +31,6 @@ export async function getPictures(query, renderFn) {
   const url = `https://pixabay.com/api/?${searchParams}`;
 
   try {
-    loader.style.display = 'block';
     const res = await axios.get(url);
     const pictures = res.data.hits;
     const totalHits = res.data.totalHits;
@@ -48,13 +47,13 @@ export async function getPictures(query, renderFn) {
       });
     } else {
       page += 1;
-      //rendering
+      //showing the found pictures
       renderFn(pictures);
-      loadMoreBtn.classList.remove('not-visible');
+      loadMoreBtn.classList.toggle('visible', 'not-visible');
     }
-
+    //no more pictures logic
     if (page > Math.ceil(totalHits / perPage)) {
-      loadMoreBtn.classList.add('not-visible');
+      loadMoreBtn.classList.toggle('not-visible', 'visible');
       iziToast.error({
         title: `We're sorry, but you've reached the end of search results.`,
         message: 'Try another query',
@@ -65,11 +64,11 @@ export async function getPictures(query, renderFn) {
         closeOnClick: true,
       });
     } else {
-      loadMoreBtn.classList.remove('not-visible');
+      loadMoreBtn.classList.toggle('visible', 'not-visible');
     }
   } catch (e) {
-    console.log(e);
+    console.error(e);
   } finally {
-    loader.style.display = 'none';
+    loader.computedStyleMap.display = 'none';
   }
 }
