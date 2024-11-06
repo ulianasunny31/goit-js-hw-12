@@ -8,7 +8,7 @@ const lightbox = new SimpleLightbox('.gallery a', {
 });
 
 //Rendering function
-function renderPictures(pics) {
+function renderPictures(pics, isFirstLoad) {
   const markup = pics
     .map(
       ({
@@ -50,9 +50,16 @@ function renderPictures(pics) {
     )
     .join('');
   gallery.insertAdjacentHTML('beforeend', markup);
-  // const lastCard = gallery.lastElementChild;
-  // const cardHeight = lastCard.getBoundingClientRect().height;
-  // const scrollDist = cardHeight * 2;
+  const lastCard = gallery.lastElementChild;
+  const cardHeight = lastCard.getBoundingClientRect().height;
+  const scrollDist = cardHeight * 2;
+
+  if (!isFirstLoad) {
+    window.scrollBy({
+      top: scrollDist,
+      behavior: 'smooth',
+    });
+  }
 
   //Renewing the gallery
   lightbox.refresh();

@@ -2,6 +2,10 @@
   display: none;
 }
 
+.guard {
+  height: 50px;
+}
+
 .visible {
   display: block;
 }
