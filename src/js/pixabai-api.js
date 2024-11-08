@@ -11,6 +11,7 @@ let page = 1;
 let perPage = 15;
 let isLoading = false;
 export let userSearchQuery = '';
+loadMoreBtn.style.display = 'none';
 
 export async function getPictures(query, renderFn, isFirstLoad = false) {
   if (isLoading) return;
@@ -34,11 +35,14 @@ export async function getPictures(query, renderFn, isFirstLoad = false) {
   const url = `https://pixabay.com/api/?${searchParams}`;
 
   try {
+    loader.style.display = 'block';
     const res = await axios.get(url);
     const pictures = res.data.hits;
     const totalHits = res.data.totalHits;
 
     if (pictures.length === 0 && page === 1) {
+      loadMoreBtn.style.display = 'none';
+
       iziToast.error({
         title: 'No pictures found',
         message: 'Try another query',
@@ -52,11 +56,11 @@ export async function getPictures(query, renderFn, isFirstLoad = false) {
       page += 1;
       //showing the found pictures
       renderFn(pictures, isFirstLoad);
-      loadMoreBtn.classList.toggle('visible', 'not-visible');
+      loadMoreBtn.style.display = 'block';
     }
     //no more pictures logic
-    if (page > Math.ceil(totalHits / perPage)) {
-      loadMoreBtn.classList.toggle('not-visible', 'visible');
+    if (page > Math.ceil(totalHits / perPage) && totalHits > 0) {
+      loadMoreBtn.style.display = 'none';
       iziToast.error({
         title: `We're sorry, but you've reached the end of search results.`,
         message: 'Try another query',
@@ -66,13 +70,11 @@ export async function getPictures(query, renderFn, isFirstLoad = false) {
         timeout: 3000,
         closeOnClick: true,
       });
-    } else {
-      loadMoreBtn.classList.toggle('visible', 'not-visible');
     }
   } catch (e) {
     console.error(e);
   } finally {
-    loader.computedStyleMap.display = 'none';
+    loader.style.display = 'none';
     isLoading = false;
   }
 }
