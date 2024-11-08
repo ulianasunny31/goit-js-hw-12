@@ -5,6 +5,7 @@ import { getPictures, userSearchQuery } from './js/pixabai-api';
 const form = document.getElementById('form');
 const loadMoreBtn = document.querySelector('.load-more-btn');
 export const gallery = document.querySelector('.gallery');
+loadMoreBtn.style.display = 'none';
 
 form.addEventListener('submit', e => {
   e.preventDefault();

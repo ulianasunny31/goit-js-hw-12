@@ -11,7 +11,6 @@ let page = 1;
 let perPage = 15;
 let isLoading = false;
 export let userSearchQuery = '';
-loadMoreBtn.style.display = 'none';
 
 export async function getPictures(query, renderFn, isFirstLoad = false) {
   if (isLoading) return;
